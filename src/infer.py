@@ -26,9 +26,7 @@ async def init(loop, args):
             "*": aiohttp_cors.ResourceOptions(
                     allow_credentials=True,
                     expose_headers="*",
-                    allow_headers="*",
-                )
-        })
+                    allow_headers="*")})
 
         get_resource = cors.add(app.router.add_resource('/'))
         cors.add(get_resource.add_route("GET", batcher.info_handler))
