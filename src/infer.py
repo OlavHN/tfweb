@@ -1,11 +1,17 @@
 import argparse
 
 import asyncio
+
 from aiohttp import web
 import aiohttp_cors
 
 from model import Model
 from batcher import Batcher
+
+from json_handler import JsonHandler
+from grpc_handler import GrpcHandler, Server, Channel, ModelStub, ModelQuery, ModelResult
+
+import tensorflow as tf
 
 async def init(loop, args):
     if args.tags:
@@ -13,34 +19,38 @@ async def init(loop, args):
     else:
         tags = Model.default_tag
     model = Model(args.model, [tags])
-    batcher = Batcher(model, loop, args.batch_size, args.batch_transpose)
+    batcher = Batcher(model, loop, args.batch_size)
 
-    app = web.Application(loop=loop, client_max_size=args.request_size)
-    app.router.add_get('/stats', batcher.stats_handler)
+    web_app = web.Application(loop=loop, client_max_size=args.request_size)
+    web_app.router.add_get('/stats', batcher.stats_handler)
+
+    json_handler = JsonHandler(model, batcher, args.batch_transpose)
 
     if args.no_cors:
-        app.router.add_get('/', batcher.info_handler)
-        app.router.add_post('/{method}', batcher.handler)
+        web_app.router.add_get('/', batcher.info_handler)
+        web_app.router.add_post('/{method}', json_handler.handler)
     else:
-        cors = aiohttp_cors.setup(app, defaults={
+        cors = aiohttp_cors.setup(web_app, defaults={
             "*": aiohttp_cors.ResourceOptions(
                     allow_credentials=True,
                     expose_headers="*",
                     allow_headers="*")})
 
-        get_resource = cors.add(app.router.add_resource('/'))
+        get_resource = cors.add(web_app.router.add_resource('/'))
         cors.add(get_resource.add_route("GET", batcher.info_handler))
 
-        post_resource = cors.add(app.router.add_resource('/{method}'))
-        cors.add(post_resource.add_route("POST", batcher.handler))
+        post_resource = cors.add(web_app.router.add_resource('/{method}'))
+        cors.add(post_resource.add_route("POST", json_handler.handler))
 
     if args.static_path:
-        app.router.add_static(
+        web_app.router.add_static(
             '/web/',
             path=args.static_path,
             name='static')
 
-    return app
+    grpc_app = Server([GrpcHandler(model, batcher)], loop=loop)
+
+    return web_app, grpc_app
 
 def main():
     parser = argparse.ArgumentParser(description='tf-infer')
@@ -61,8 +71,12 @@ def main():
     args = parser.parse_args()
 
     loop = asyncio.get_event_loop()
-    app = loop.run_until_complete(init(loop, args))
-    web.run_app(app)
+
+    web_app, grpc_app = loop.run_until_complete(init(loop, args))
+
+    loop.run_until_complete(grpc_app.start('127.0.0.1', 50051))
+
+    web.run_app(web_app)
 
 if __name__ == '__main__':
     main()
