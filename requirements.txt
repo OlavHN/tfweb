@@ -1,4 +1,4 @@
 tensorflow
 aiohttp
 aiohttp_cors
-git+https://github.com/vmagamedov/grpclib.git
+grpclib==0.1.0rc2
