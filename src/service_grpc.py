@@ -7,22 +7,23 @@ import grpclib.const
 import grpclib.client
 
 import tensorflow.core.framework.tensor_pb2
+import google.protobuf.wrappers_pb2
 import service_pb2
 
 
 class ModelBase(abc.ABC):
 
     @abc.abstractmethod
-    async def Infer(self, stream):
+    async def Predict(self, stream):
         pass
 
     def __mapping__(self):
         return {
-            '/Model/Infer': grpclib.const.Handler(
-                self.Infer,
+            '/Model/Predict': grpclib.const.Handler(
+                self.Predict,
                 grpclib.const.Cardinality.UNARY_UNARY,
-                service_pb2.ModelQuery,
-                service_pb2.ModelResult,
+                service_pb2.PredictRequest,
+                service_pb2.PredictResponse,
             ),
         }
 
@@ -30,9 +31,9 @@ class ModelBase(abc.ABC):
 class ModelStub:
 
     def __init__(self, channel: grpclib.client.Channel) -> None:
-        self.Infer = grpclib.client.UnaryUnaryMethod(
+        self.Predict = grpclib.client.UnaryUnaryMethod(
             channel,
-            '/Model/Infer',
-            service_pb2.ModelQuery,
-            service_pb2.ModelResult,
+            '/Model/Predict',
+            service_pb2.PredictRequest,
+            service_pb2.PredictResponse,
         )

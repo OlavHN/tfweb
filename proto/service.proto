@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "tensorflow/core/framework/tensor.proto";
+import "google/protobuf/wrappers.proto";
+
+
+service Model {
+  rpc Predict(PredictRequest) returns (PredictResponse);
+}
+
+message ModelSpec {
+  string name = 1;
+  google.protobuf.Int64Value version = 2;
+  string signature_name = 3;
+}
+
+message PredictRequest {
+  ModelSpec model_spec = 1;
+  map<string, tensorflow.TensorProto> inputs = 2;
+  repeated string output_filter = 3;
+}
+
+message PredictResponse {
+  map<string, tensorflow.TensorProto> result = 1;
+}

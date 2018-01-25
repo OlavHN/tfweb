@@ -14,40 +14,86 @@ _sym_db = _symbol_database.Default()
 
 
 from tensorflow.core.framework import tensor_pb2 as tensorflow_dot_core_dot_framework_dot_tensor__pb2
+from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='service.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\rservice.proto\x1a&tensorflow/core/framework/tensor.proto\"\x8a\x01\n\nModelQuery\x12\x0e\n\x06method\x18\x01 \x01(\t\x12%\n\x05query\x18\x02 \x03(\x0b\x32\x16.ModelQuery.QueryEntry\x1a\x45\n\nQueryEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\"\x8f\x01\n\x0bModelResult\x12\x0e\n\x06status\x18\x01 \x01(\t\x12(\n\x06result\x18\x02 \x03(\x0b\x32\x18.ModelResult.ResultEntry\x1a\x46\n\x0bResultEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\x32+\n\x05Model\x12\"\n\x05Infer\x12\x0b.ModelQuery\x1a\x0c.ModelResultb\x06proto3')
+  serialized_pb=_b('\n\rservice.proto\x1a&tensorflow/core/framework/tensor.proto\x1a\x1egoogle/protobuf/wrappers.proto\"_\n\tModelSpec\x12\x0c\n\x04name\x18\x01 \x01(\t\x12,\n\x07version\x18\x02 \x01(\x0b\x32\x1b.google.protobuf.Int64Value\x12\x16\n\x0esignature_name\x18\x03 \x01(\t\"\xbc\x01\n\x0ePredictRequest\x12\x1e\n\nmodel_spec\x18\x01 \x01(\x0b\x32\n.ModelSpec\x12+\n\x06inputs\x18\x02 \x03(\x0b\x32\x1b.PredictRequest.InputsEntry\x12\x15\n\routput_filter\x18\x03 \x03(\t\x1a\x46\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\"\x87\x01\n\x0fPredictResponse\x12,\n\x06result\x18\x01 \x03(\x0b\x32\x1c.PredictResponse.ResultEntry\x1a\x46\n\x0bResultEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\x32\x35\n\x05Model\x12,\n\x07Predict\x12\x0f.PredictRequest\x1a\x10.PredictResponseb\x06proto3')
   ,
-  dependencies=[tensorflow_dot_core_dot_framework_dot_tensor__pb2.DESCRIPTOR,])
+  dependencies=[tensorflow_dot_core_dot_framework_dot_tensor__pb2.DESCRIPTOR,google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,])
 
 
 
 
-_MODELQUERY_QUERYENTRY = _descriptor.Descriptor(
-  name='QueryEntry',
-  full_name='ModelQuery.QueryEntry',
+_MODELSPEC = _descriptor.Descriptor(
+  name='ModelSpec',
+  full_name='ModelSpec',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='ModelQuery.QueryEntry.key', index=0,
+      name='name', full_name='ModelSpec.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='ModelQuery.QueryEntry.value', index=1,
+      name='version', full_name='ModelSpec.version', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='signature_name', full_name='ModelSpec.signature_name', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=89,
+  serialized_end=184,
+)
+
+
+_PREDICTREQUEST_INPUTSENTRY = _descriptor.Descriptor(
+  name='InputsEntry',
+  full_name='PredictRequest.InputsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='PredictRequest.InputsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='PredictRequest.InputsEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -60,35 +106,42 @@ _MODELQUERY_QUERYENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=127,
-  serialized_end=196,
+  serialized_start=305,
+  serialized_end=375,
 )
 
-_MODELQUERY = _descriptor.Descriptor(
-  name='ModelQuery',
-  full_name='ModelQuery',
+_PREDICTREQUEST = _descriptor.Descriptor(
+  name='PredictRequest',
+  full_name='PredictRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='method', full_name='ModelQuery.method', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='model_spec', full_name='PredictRequest.model_spec', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='query', full_name='ModelQuery.query', index=1,
+      name='inputs', full_name='PredictRequest.inputs', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='output_filter', full_name='PredictRequest.output_filter', index=2,
+      number=3, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[_MODELQUERY_QUERYENTRY, ],
+  nested_types=[_PREDICTREQUEST_INPUTSENTRY, ],
   enum_types=[
   ],
   options=None,
@@ -97,32 +150,32 @@ _MODELQUERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=58,
-  serialized_end=196,
+  serialized_start=187,
+  serialized_end=375,
 )
 
 
-_MODELRESULT_RESULTENTRY = _descriptor.Descriptor(
+_PREDICTRESPONSE_RESULTENTRY = _descriptor.Descriptor(
   name='ResultEntry',
-  full_name='ModelResult.ResultEntry',
+  full_name='PredictResponse.ResultEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='ModelResult.ResultEntry.key', index=0,
+      name='key', full_name='PredictResponse.ResultEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='ModelResult.ResultEntry.value', index=1,
+      name='value', full_name='PredictResponse.ResultEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -135,35 +188,28 @@ _MODELRESULT_RESULTENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=272,
-  serialized_end=342,
+  serialized_start=443,
+  serialized_end=513,
 )
 
-_MODELRESULT = _descriptor.Descriptor(
-  name='ModelResult',
-  full_name='ModelResult',
+_PREDICTRESPONSE = _descriptor.Descriptor(
+  name='PredictResponse',
+  full_name='PredictResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='status', full_name='ModelResult.status', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='result', full_name='ModelResult.result', index=1,
-      number=2, type=11, cpp_type=10, label=3,
+      name='result', full_name='PredictResponse.result', index=0,
+      number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[_MODELRESULT_RESULTENTRY, ],
+  nested_types=[_PREDICTRESPONSE_RESULTENTRY, ],
   enum_types=[
   ],
   options=None,
@@ -172,55 +218,65 @@ _MODELRESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=199,
-  serialized_end=342,
+  serialized_start=378,
+  serialized_end=513,
 )
 
-_MODELQUERY_QUERYENTRY.fields_by_name['value'].message_type = tensorflow_dot_core_dot_framework_dot_tensor__pb2._TENSORPROTO
-_MODELQUERY_QUERYENTRY.containing_type = _MODELQUERY
-_MODELQUERY.fields_by_name['query'].message_type = _MODELQUERY_QUERYENTRY
-_MODELRESULT_RESULTENTRY.fields_by_name['value'].message_type = tensorflow_dot_core_dot_framework_dot_tensor__pb2._TENSORPROTO
-_MODELRESULT_RESULTENTRY.containing_type = _MODELRESULT
-_MODELRESULT.fields_by_name['result'].message_type = _MODELRESULT_RESULTENTRY
-DESCRIPTOR.message_types_by_name['ModelQuery'] = _MODELQUERY
-DESCRIPTOR.message_types_by_name['ModelResult'] = _MODELRESULT
+_MODELSPEC.fields_by_name['version'].message_type = google_dot_protobuf_dot_wrappers__pb2._INT64VALUE
+_PREDICTREQUEST_INPUTSENTRY.fields_by_name['value'].message_type = tensorflow_dot_core_dot_framework_dot_tensor__pb2._TENSORPROTO
+_PREDICTREQUEST_INPUTSENTRY.containing_type = _PREDICTREQUEST
+_PREDICTREQUEST.fields_by_name['model_spec'].message_type = _MODELSPEC
+_PREDICTREQUEST.fields_by_name['inputs'].message_type = _PREDICTREQUEST_INPUTSENTRY
+_PREDICTRESPONSE_RESULTENTRY.fields_by_name['value'].message_type = tensorflow_dot_core_dot_framework_dot_tensor__pb2._TENSORPROTO
+_PREDICTRESPONSE_RESULTENTRY.containing_type = _PREDICTRESPONSE
+_PREDICTRESPONSE.fields_by_name['result'].message_type = _PREDICTRESPONSE_RESULTENTRY
+DESCRIPTOR.message_types_by_name['ModelSpec'] = _MODELSPEC
+DESCRIPTOR.message_types_by_name['PredictRequest'] = _PREDICTREQUEST
+DESCRIPTOR.message_types_by_name['PredictResponse'] = _PREDICTRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-ModelQuery = _reflection.GeneratedProtocolMessageType('ModelQuery', (_message.Message,), dict(
+ModelSpec = _reflection.GeneratedProtocolMessageType('ModelSpec', (_message.Message,), dict(
+  DESCRIPTOR = _MODELSPEC,
+  __module__ = 'service_pb2'
+  # @@protoc_insertion_point(class_scope:ModelSpec)
+  ))
+_sym_db.RegisterMessage(ModelSpec)
 
-  QueryEntry = _reflection.GeneratedProtocolMessageType('QueryEntry', (_message.Message,), dict(
-    DESCRIPTOR = _MODELQUERY_QUERYENTRY,
+PredictRequest = _reflection.GeneratedProtocolMessageType('PredictRequest', (_message.Message,), dict(
+
+  InputsEntry = _reflection.GeneratedProtocolMessageType('InputsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _PREDICTREQUEST_INPUTSENTRY,
     __module__ = 'service_pb2'
-    # @@protoc_insertion_point(class_scope:ModelQuery.QueryEntry)
+    # @@protoc_insertion_point(class_scope:PredictRequest.InputsEntry)
     ))
   ,
-  DESCRIPTOR = _MODELQUERY,
+  DESCRIPTOR = _PREDICTREQUEST,
   __module__ = 'service_pb2'
-  # @@protoc_insertion_point(class_scope:ModelQuery)
+  # @@protoc_insertion_point(class_scope:PredictRequest)
   ))
-_sym_db.RegisterMessage(ModelQuery)
-_sym_db.RegisterMessage(ModelQuery.QueryEntry)
+_sym_db.RegisterMessage(PredictRequest)
+_sym_db.RegisterMessage(PredictRequest.InputsEntry)
 
-ModelResult = _reflection.GeneratedProtocolMessageType('ModelResult', (_message.Message,), dict(
+PredictResponse = _reflection.GeneratedProtocolMessageType('PredictResponse', (_message.Message,), dict(
 
   ResultEntry = _reflection.GeneratedProtocolMessageType('ResultEntry', (_message.Message,), dict(
-    DESCRIPTOR = _MODELRESULT_RESULTENTRY,
+    DESCRIPTOR = _PREDICTRESPONSE_RESULTENTRY,
     __module__ = 'service_pb2'
-    # @@protoc_insertion_point(class_scope:ModelResult.ResultEntry)
+    # @@protoc_insertion_point(class_scope:PredictResponse.ResultEntry)
     ))
   ,
-  DESCRIPTOR = _MODELRESULT,
+  DESCRIPTOR = _PREDICTRESPONSE,
   __module__ = 'service_pb2'
-  # @@protoc_insertion_point(class_scope:ModelResult)
+  # @@protoc_insertion_point(class_scope:PredictResponse)
   ))
-_sym_db.RegisterMessage(ModelResult)
-_sym_db.RegisterMessage(ModelResult.ResultEntry)
+_sym_db.RegisterMessage(PredictResponse)
+_sym_db.RegisterMessage(PredictResponse.ResultEntry)
 
 
-_MODELQUERY_QUERYENTRY.has_options = True
-_MODELQUERY_QUERYENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
-_MODELRESULT_RESULTENTRY.has_options = True
-_MODELRESULT_RESULTENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
+_PREDICTREQUEST_INPUTSENTRY.has_options = True
+_PREDICTREQUEST_INPUTSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
+_PREDICTRESPONSE_RESULTENTRY.has_options = True
+_PREDICTRESPONSE_RESULTENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 
 _MODEL = _descriptor.ServiceDescriptor(
   name='Model',
@@ -228,16 +284,16 @@ _MODEL = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=344,
-  serialized_end=387,
+  serialized_start=515,
+  serialized_end=568,
   methods=[
   _descriptor.MethodDescriptor(
-    name='Infer',
-    full_name='Model.Infer',
+    name='Predict',
+    full_name='Model.Predict',
     index=0,
     containing_service=None,
-    input_type=_MODELQUERY,
-    output_type=_MODELRESULT,
+    input_type=_PREDICTREQUEST,
+    output_type=_PREDICTRESPONSE,
     options=None,
   ),
 ])

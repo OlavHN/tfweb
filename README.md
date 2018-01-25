@@ -1,36 +1,53 @@
 # Infer
 
-Web server for Tensorflow inference in python.
+Web server for Tensorflow model inference in python.
+
+## Quickstart
 
 ```
-$ python src/infer.py --help
+$ pip install tensorflow
+$ pip install tf-infer
+$ tf-infer --model gs://infer_saved_model/hotdog --batch_transpose
+$ curl -d '{"image": {"url": "https://i.imgur.com/H37kxPH.jpg"}}' localhost:8080/predict
+{
+  "class": ["no hotdog"],
+  "prediction": [0.7314095497131348]
+}
+```
+```
 usage: infer.py [-h] [--model MODEL] [--tags TAGS] [--batch_size BATCH_SIZE]
                 [--static_path STATIC_PATH] [--batch_transpose] [--no_cors]
-                [--request_size REQUEST_SIZE]
+                [--request_size REQUEST_SIZE] [--grpc_port GRPC_PORT]
 
 tf-infer
 
 optional arguments:
   -h, --help            show this help message and exit
-  --model MODEL         path to saved_model directory
-  --tags TAGS           Comma separated SavedModel tags
+  --model MODEL         path to saved_model directory (can be GCS)
+  --tags TAGS           Comma separated SavedModel tags. Defaults to `serve`
   --batch_size BATCH_SIZE
                         Maximum batch size for batchable methods
   --static_path STATIC_PATH
-                        Path to static content, eg. html files
+                        Path to static content, eg. html files served on GET
   --batch_transpose     Provide and return each example in batches separately
-  --no_cors             Turn off blanket CORS headers
+  --no_cors             Accept HTTP requests from all domains
   --request_size REQUEST_SIZE
                         Max size per request
+  --grpc_port GRPC_PORT
+                        Port accepting grpc requests
 ```
+
+## Why?
+
+tf-infer aims to be easier to setup, easier to tinker with and easier to integrate with than tf-serving. Thanks to being written in pure python 3 it's possible to interact with tensorflow though it's flexible python bindings.
 
 ## Usage
 
-Tensorflow has a standard format for persisting models called SavedModel. Any model persistend in this format which specifies it signatures can then automatically be exposed as a web service with tf-infer.
+Tensorflow has a standard format for persisting models called SavedModel. Any model persisted in this format which specifies it signatures can then automatically be exposed as a web service with tf-infer.
 
-Create a SavedModel that contains signature_defs (Look in the `examples` folder) then start a server exposing the model over JSON with `$ python infer.py --model path/to/savedmodel --batch_transpose`
+Create a SavedModel that contains signature_defs (Look in the `examples` folder) then start a server exposing the model over JSON with `$ python infer.py --model gs://infer_saved_model/openimages --batch_transpose`
 
-To see what sort of APIs the model exposes one can query it directly:
+To see what sort of APIs the model exposes one can query it to get its type information:
 
 `$ curl localhost:8080 | python -m json.tool`
 ```
@@ -97,7 +114,11 @@ Thus we can query the method `names` like this:
 
 And we received 5 strings corresponding to the best inception matches.
 
-Since the method accepts batches we can send multiple queries in the same request:
+## Batching
+
+By default tf-infer doesn't do any batching, but if a method (signature definition) has a variable outer dimension for all inputs and outputs (i.e. shape is [-1, ..]) then the method is assumed to be batchable and tf-infer will optimistically queue up requests for batching while the tensorflow session is busy doing other stuff (like running the previous batch).
+
+If a method accepts batches we can also send multiple queries in the same request:
 
 `curl -d '[{"image": {"url": "https://i.imgur.com/ekNNNjN.jpg"}}, {"image": {"url": "https://i.imgur.com/JNo5tHj.jpg"}}]' localhost:8080/names | python -m json.tool`
 ```
@@ -123,17 +144,17 @@ Since the method accepts batches we can send multiple queries in the same reques
 ]
 ```
 
-In fact, for batched methods (identified by all inputs and outputs having a variable outer dimension, i.e. `-1`) tf-infer will batch up queries from multiple HTTP requests and process them as a single batch as soon as the backing tensorflow session is ready. Afterwards it will split the batch again and send the results to the correct recipients.
-
 ## Functionality
 
-- Pure python - same as the tensorflow API!
-- Reads tensorflow saved_model and exposes a HTTP API based on the signature definitions
+- Pure python - same as the most mature tensorflow API!
+- Reads tensorflow saved_model and exposes a HTTP API based on type information in the signature definitions
 - Batches across multiple requests for GPU utilization without delay
 - Can read binary data over JSON either wrapped in `{"b64": "..."}` or `{"url": "..."}`
 - Also base64 encodes JSON results that aren't valid UTF-8
+- Also accepts the Predict gRPC signature. Check out `test.py` for an example.
 
 ## TODO
-- tests
-- drop requests based on queue length
+- More tests (both coded and real world!)
+- Drop requests when
 - expose metrics for auto scaling
+- when downloading URLs, keep track of content size

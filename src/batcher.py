@@ -1,7 +1,7 @@
-import base64
 import numpy as np
 import asyncio
 from aiohttp import web
+
 
 class Batcher:
     def __init__(self, model, loop, batch_size=32):
@@ -12,18 +12,24 @@ class Batcher:
         batched_methods, direct_methods = self.find_batched_methods()
         self.direct_methods = set(map(lambda x: x['name'], direct_methods))
 
-        self.batched_queues = {signature['name']: asyncio.Queue(maxsize=batch_size, loop=loop)
-            for signature in batched_methods}
+        self.batched_queues = {
+                signature['name']: asyncio.Queue(
+                        maxsize=batch_size, loop=loop)
+                for signature in batched_methods
+        }
 
         for queue in self.batched_queues:
-            loop.create_task(self.batch(self.batched_queues[queue], batch_size))
+            loop.create_task(
+                    self.batch(self.batched_queues[queue], batch_size))
 
     def find_batched_methods(self):
         batched_methods = []
         direct_methods = []
         for signature in self.model.list_signatures():
-            for _, tensor in list(signature['inputs'].items()) + list(signature['outputs'].items()):
-                if isinstance(tensor['shape'], list) and len(tensor['shape']) and tensor['shape'][0] == -1:
+            for _, tensor in list(signature['inputs'].items()) + list(
+                    signature['outputs'].items()):
+                if isinstance(tensor['shape'], list) and len(
+                        tensor['shape']) and tensor['shape'][0] == -1:
                     continue
                 else:
                     direct_methods.append(signature)
@@ -34,7 +40,8 @@ class Batcher:
         return batched_methods, direct_methods
 
     async def batch_query(self, method, data):
-        query_params, result_params = await self.model.parse(method, data, True)
+        query_params, result_params = await self.model.parse(
+                method, data, True)
 
         task = asyncio.Queue(loop=self.loop)
 
@@ -43,7 +50,8 @@ class Batcher:
         num_items = 0
         for example in zip(*values):
             num_items += 1
-            await self.batched_queues[method].put((keys, example, result_params, task))
+            await self.batched_queues[method].put((keys, example,
+                                                   result_params, task))
 
         # Get results back
         results = []
@@ -57,8 +65,10 @@ class Batcher:
 
         # Massage individual results into a batched response
         keys, examples = zip(*results)
-        batch_result = { key: np.stack(val)
-                for key, val in zip(keys[0], zip(*examples)) }
+        batch_result = {
+                key: np.stack(val)
+                for key, val in zip(keys[0], zip(*examples))
+        }
 
         return batch_result
 
@@ -78,8 +88,10 @@ class Batcher:
 
             keys, examples, result_params, queues = zip(*batch)
             batched_examples = zip(*examples)
-            query_params = { key: np.stack(val)
-                    for key, val in zip(keys[0], batched_examples) }
+            query_params = {
+                    key: np.stack(val)
+                    for key, val in zip(keys[0], batched_examples)
+            }
 
             try:
                 result = self.model.query(query_params, result_params[0])

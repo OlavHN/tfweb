@@ -1,7 +1,8 @@
 import tensorflow as tf
 import numpy as np
 
-dir(tf.contrib) # contrib ops lazily loaded
+dir(tf.contrib)  # contrib ops lazily loaded
+
 
 class Model:
 
@@ -26,8 +27,8 @@ class Model:
         for key, value in inputs.items():
             if key not in request:
                 raise ValueError(
-                    'Request missing required key %s for method %s' %
-                    (key, method))
+                        'Request missing required key %s for method %s' %
+                        (key, method))
 
             input_json = request[key]
 
@@ -36,25 +37,30 @@ class Model:
             try:
                 tensor = np.asarray(input_json, dtype=dtype)
             except ValueError as e:
-                raise ValueError('Incompatible types for key %s: %s' %
-                        (key, e))
+                raise ValueError('Incompatible types for key %s: %s' % (key,
+                                                                        e))
             correct_shape = tf.TensorShape(inputs[key].tensor_shape)
             input_shape = tf.TensorShape(tensor.shape)
             if not correct_shape.is_compatible_with(input_shape):
-                raise ValueError('Shape of input %s %s not compatible with %s' %
+                raise ValueError(
+                        'Shape of input %s %s not compatible with %s' %
                         (key, input_shape.as_list(), correct_shape.as_list()))
             if validate_batch:
                 try:
-                    if batch_length > 0 and batch_length != input_shape.as_list()[0]:
+                    if batch_length > 0 and \
+                       batch_length != input_shape.as_list()[0]:
                         raise ValueError(
-                            'The outer dimension of different tensors did not match')
+                                'The outer dimension of tensors did not match')
                     batch_length = input_shape.as_list()[0]
                 except IndexError:
-                    raise ValueError('%s is a scalar and cannot be batched' % key)
+                    raise ValueError(
+                            '%s is a scalar and cannot be batched' % key)
             query_params[value.name] = tensor
 
-        result_params = { key: self.sess.graph.get_tensor_by_name(val.name)
-                    for key, val in outputs.items() }
+        result_params = {
+                key: self.sess.graph.get_tensor_by_name(val.name)
+                for key, val in outputs.items()
+        }
 
         return query_params, result_params
 
@@ -75,17 +81,19 @@ class Model:
             signature['outputs'] = {}
             for key, tensor_info in signature_def.inputs.items():
                 signature['inputs'][key] = {
-                    'type': tf.as_dtype(tensor_info.dtype).name,
-                    'shape': 'unkown'
-                        if tensor_info.tensor_shape.unknown_rank
-                        else [dim.size for dim in tensor_info.tensor_shape.dim]
+                        'type':
+                        tf.as_dtype(tensor_info.dtype).name,
+                        'shape':
+                        'unkown' if tensor_info.tensor_shape.unknown_rank else
+                        [dim.size for dim in tensor_info.tensor_shape.dim]
                 }
             for key, tensor_info in signature_def.outputs.items():
                 signature['outputs'][key] = {
-                    'type': tf.as_dtype(tensor_info.dtype).name,
-                    'shape': 'unkown'
-                        if tensor_info.tensor_shape.unknown_rank
-                        else [dim.size for dim in tensor_info.tensor_shape.dim]
+                        'type':
+                        tf.as_dtype(tensor_info.dtype).name,
+                        'shape':
+                        'unkown' if tensor_info.tensor_shape.unknown_rank else
+                        [dim.size for dim in tensor_info.tensor_shape.dim]
                 }
             signatures.append(signature)
         return signatures
