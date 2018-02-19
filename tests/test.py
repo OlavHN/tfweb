@@ -4,12 +4,12 @@ import numpy as np
 import asyncio
 from aiohttp import ClientSession
 
-from infer.model import Model
-from infer.batcher import Batcher
+from tfweb.model import Model
+from tfweb.batcher import Batcher
 
 from grpclib.client import Channel
-from infer.service_pb2 import PredictRequest
-from infer.service_grpc import ModelStub
+from tfweb.service_pb2 import PredictRequest
+from tfweb.service_grpc import ModelStub
 
 
 class Test(unittest.TestCase):

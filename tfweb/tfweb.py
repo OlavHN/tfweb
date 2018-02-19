@@ -6,11 +6,11 @@ import asyncio
 from aiohttp import web
 import aiohttp_cors
 
-from infer.model import Model
-from infer.batcher import Batcher
+from tfweb.model import Model
+from tfweb.batcher import Batcher
 
-from infer.json_handler import JsonHandler
-from infer.grpc_handler import GrpcHandler
+from tfweb.json_handler import JsonHandler
+from tfweb.grpc_handler import GrpcHandler
 
 from grpclib.server import Server
 
@@ -64,7 +64,7 @@ async def init(loop, args):
 
 
 def main(args):
-    parser = argparse.ArgumentParser(description='tf-infer')
+    parser = argparse.ArgumentParser(description='tfweb')
     parser.add_argument(
             '--model',
             type=str,

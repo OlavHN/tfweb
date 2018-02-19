@@ -8,7 +8,7 @@ import grpclib.client
 
 import tensorflow.core.framework.tensor_pb2
 import google.protobuf.wrappers_pb2
-from infer import service_pb2
+from tfweb import service_pb2
 
 
 class ModelBase(abc.ABC):
