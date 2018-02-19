@@ -1,4 +1,4 @@
-# Infer
+# tfweb
 
 Web server for Tensorflow model inference in python.
 
@@ -6,20 +6,24 @@ Web server for Tensorflow model inference in python.
 
 ```
 $ pip install tensorflow
-$ pip install tf-infer
-$ tf-infer --model gs://infer_saved_model/hotdog --batch_transpose
+$ pip install tfweb
+$ tfweb --model gs://infer_saved_model/hotdog --batch_transpose
 $ curl -d '{"image": {"url": "https://i.imgur.com/H37kxPH.jpg"}}' localhost:8080/predict
 {
   "class": ["no hotdog"],
   "prediction": [0.7314095497131348]
 }
 ```
+
+
 ```
-usage: infer.py [-h] [--model MODEL] [--tags TAGS] [--batch_size BATCH_SIZE]
+$ tfweb -h
+
+usage: tfweb [-h] [--model MODEL] [--tags TAGS] [--batch_size BATCH_SIZE]
                 [--static_path STATIC_PATH] [--batch_transpose] [--no_cors]
                 [--request_size REQUEST_SIZE] [--grpc_port GRPC_PORT]
 
-tf-infer
+tfweb
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -39,13 +43,13 @@ optional arguments:
 
 ## Why?
 
-tf-infer aims to be easier to setup, easier to tinker with and easier to integrate with than tf-serving. Thanks to being written in pure python 3 it's possible to interact with tensorflow though it's flexible python bindings.
+tfweb aims to be easier to setup, easier to tinker with and easier to integrate with than tf-serving. Thanks to being written in pure python 3 it's possible to interact with tensorflow though it's flexible python bindings.
 
 ## Usage
 
-Tensorflow has a standard format for persisting models called SavedModel. Any model persisted in this format which specifies it signatures can then automatically be exposed as a web service with tf-infer.
+Tensorflow has a standard format for persisting models called SavedModel. Any model persisted in this format which specifies it signatures can then automatically be exposed as a web service with tfweb.
 
-Create a SavedModel that contains signature_defs (Look in the `examples` folder) then start a server exposing the model over JSON with `$ python infer.py --model gs://infer_saved_model/openimages --batch_transpose`
+Create a SavedModel that contains signature_defs (Look in the `examples` folder) then start a server exposing the model over JSON with `$ tfweb --model gs://infer_saved_model/openimages --batch_transpose`
 
 To see what sort of APIs the model exposes one can query it to get its type information:
 
@@ -116,7 +120,7 @@ And we received 5 strings corresponding to the best inception matches.
 
 ## Batching
 
-By default tf-infer doesn't do any batching, but if a method (signature definition) has a variable outer dimension for all inputs and outputs (i.e. shape is [-1, ..]) then the method is assumed to be batchable and tf-infer will optimistically queue up requests for batching while the tensorflow session is busy doing other stuff (like running the previous batch).
+By default tfweb doesn't do any batching, but if a method (signature definition) has a variable outer dimension for all inputs and outputs (i.e. shape is [-1, ..]) then the method is assumed to be batchable and tfweb will optimistically queue up requests for batching while the tensorflow session is busy doing other stuff (like running the previous batch).
 
 If a method accepts batches we can also send multiple queries in the same request:
 
