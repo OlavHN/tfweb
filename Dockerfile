@@ -9,7 +9,7 @@ RUN pip install -r requirements.txt
 
 # Optional generate groc proto files
 # RUN pip3 install grpcio-tools && cd proto && \
-#     python -m grpc_tools.protoc -I. --python_out=../src --python_grpc_out=../src service.proto
+#     python -m grpc_tools.protoc -I. --python_out=../infer --python_grpc_out=../infer service.proto
 
 ADD . /infer
 

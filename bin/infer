@@ -1,0 +1,4 @@
+#!python
+import sys
+from infer import infer
+infer.main(args=sys.argv[1:])

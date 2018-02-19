@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from service_pb2 import PredictResponse
-from service_grpc import ModelBase
+from infer.service_pb2 import PredictResponse
+from infer.service_grpc import ModelBase
 
 # from predict_service_pb2 import PredictResponse
 # from predict_service_grpc import PredictionServiceBase

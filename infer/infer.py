@@ -1,4 +1,3 @@
-#!python
 import sys
 import argparse
 
@@ -7,11 +6,11 @@ import asyncio
 from aiohttp import web
 import aiohttp_cors
 
-from model import Model
-from batcher import Batcher
+from infer.model import Model
+from infer.batcher import Batcher
 
-from json_handler import JsonHandler
-from grpc_handler import GrpcHandler
+from infer.json_handler import JsonHandler
+from infer.grpc_handler import GrpcHandler
 
 from grpclib.server import Server
 
