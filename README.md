@@ -7,7 +7,7 @@ Web server for Tensorflow model inference in python.
 ```
 $ pip install tensorflow
 $ pip install tfweb
-$ tfweb --model gs://infer_saved_model/hotdog --batch_transpose
+$ tfweb --model s3://tfweb-models/hotdog --batch_transpose
 $ curl -d '{"image": {"url": "https://i.imgur.com/H37kxPH.jpg"}}' localhost:8080/predict
 {
   "class": ["no hotdog"],
@@ -15,6 +15,7 @@ $ curl -d '{"image": {"url": "https://i.imgur.com/H37kxPH.jpg"}}' localhost:8080
 }
 ```
 
+Might take some time to download the model from `s3://tfweb-models`.
 
 ```
 $ tfweb -h
@@ -27,7 +28,7 @@ tfweb
 
 optional arguments:
   -h, --help            show this help message and exit
-  --model MODEL         path to saved_model directory (can be GCS)
+  --model MODEL         path to saved_model directory (can also be S3, GCS or hdfs)
   --tags TAGS           Comma separated SavedModel tags. Defaults to `serve`
   --batch_size BATCH_SIZE
                         Maximum batch size for batchable methods
@@ -49,7 +50,7 @@ tfweb aims to be easier to setup, easier to tinker with and easier to integrate 
 
 Tensorflow has a standard format for persisting models called SavedModel. Any model persisted in this format which specifies it signatures can then automatically be exposed as a web service with tfweb.
 
-Create a SavedModel that contains signature_defs (Look in the `examples` folder) then start a server exposing the model over JSON with `$ tfweb --model gs://infer_saved_model/openimages --batch_transpose`
+Create a SavedModel that contains signature_defs (Look in the `examples` folder) then start a server exposing the model over JSON with `$ tfweb --model s3://tfweb-models/openimages --batch_transpose`
 
 To see what sort of APIs the model exposes one can query it to get its type information:
 
