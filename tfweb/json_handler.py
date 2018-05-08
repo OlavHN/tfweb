@@ -49,7 +49,7 @@ class JsonHandler(object):
 
     async def handler(self, request):
         try:
-            method = request.match_info.get('method', 'classify')
+            method = request.match_info.get('method', 'serving_default')
             if method not in self.batcher.batched_queues and \
                method not in self.batcher.direct_methods:
                 return web.json_response(

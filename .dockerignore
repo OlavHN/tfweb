@@ -2,5 +2,4 @@
 Dockerfile
 .DS_Store
 .gitignore
-README.md
 examples
