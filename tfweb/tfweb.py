@@ -6,11 +6,11 @@ import asyncio
 from aiohttp import web
 import aiohttp_cors
 
-from tfweb.model import Model
-from tfweb.batcher import Batcher
+from model import Model
+from batcher import Batcher
 
-from tfweb.json_handler import JsonHandler
-from tfweb.grpc_handler import GrpcHandler
+from json_handler import JsonHandler
+from grpc_handler import GrpcHandler
 
 from grpclib.server import Server
 
@@ -25,7 +25,7 @@ async def init(loop, args):
         tags = args.tags.split(',')
     else:
         tags = [Model.default_tag]
-    model = Model(args.model, tags)
+    model = Model(args.model, tags, loop)
     batcher = Batcher(model, loop, args.batch_size)
 
     web_app = web.Application(loop=loop, client_max_size=args.request_size)

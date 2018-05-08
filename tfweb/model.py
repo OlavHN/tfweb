@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import functools
 
 dir(tf.contrib)  # contrib ops lazily loaded
 
@@ -8,8 +9,9 @@ class Model:
 
     default_tag = tf.saved_model.tag_constants.SERVING
 
-    def __init__(self, path, tags):
+    def __init__(self, path, tags, loop):
         self.sess = tf.Session()
+        self.loop = loop
         try:
             self.graph_def = tf.saved_model.loader.load(self.sess, tags, path)
         except Exception as e:
@@ -64,9 +66,13 @@ class Model:
 
         return query_params, result_params
 
-    def query(self, query_params, result_params):
+    async def query(self, query_params, result_params):
         ''' TODO: Interface via FIFO queue '''
-        return self.sess.run(result_params, feed_dict=query_params)
+        return await self.loop.run_in_executor(None,
+                                               functools.partial(
+                                                       self.sess.run,
+                                                       result_params,
+                                                       feed_dict=query_params))
 
     def list_signatures(self):
         signatures = []

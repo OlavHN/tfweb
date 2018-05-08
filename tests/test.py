@@ -4,6 +4,9 @@ import numpy as np
 import asyncio
 from aiohttp import ClientSession
 
+import sys
+sys.path.append("../tfweb")
+
 from tfweb.model import Model
 from tfweb.batcher import Batcher
 
@@ -24,7 +27,10 @@ class Test(unittest.TestCase):
 
 class TestModel(unittest.TestCase):
     def setUp(self):
-        self.model = Model(path='examples/basic/model', tags=['serve'])
+        self.model = Model(
+                path='examples/basic/model',
+                tags=['serve'],
+                loop=asyncio.get_event_loop())
 
     def tearDown(self):
         for task in asyncio.Task.all_tasks():
@@ -70,7 +76,8 @@ class TestModel(unittest.TestCase):
         query_params, result_params = (asyncio.get_event_loop()
                                        .run_until_complete(parsed))
 
-        result = self.model.query(query_params, result_params)
+        result = asyncio.get_event_loop().run_until_complete(
+                self.model.query(query_params, result_params))
 
         self.assertEqual(result['result'], np.array([[2.]]))
 
@@ -78,7 +85,10 @@ class TestModel(unittest.TestCase):
 class TestBatcher(unittest.TestCase):
     def setUp(self):
         self.loop = asyncio.get_event_loop()
-        self.model = Model(path='examples/basic/model', tags=['serve'])
+        self.model = Model(
+                path='examples/basic/model',
+                tags=['serve'],
+                loop=asyncio.get_event_loop())
         self.batcher = Batcher(self.model, self.loop)
 
     def tearDown(self):

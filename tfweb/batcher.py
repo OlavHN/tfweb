@@ -94,7 +94,7 @@ class Batcher:
             }
 
             try:
-                result = self.model.query(query_params, result_params[0])
+                result = await self.model.query(query_params, result_params[0])
 
                 keys, values = zip(*sorted(result.items()))
 

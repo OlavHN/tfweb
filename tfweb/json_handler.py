@@ -62,7 +62,7 @@ class JsonHandler(object):
             if method in self.batcher.direct_methods:
                 query_params, result_params = await self.model.parse(
                         method, data, False)
-                result = self.model.query(query_params, result_params)
+                result = await self.model.query(query_params, result_params)
                 return web.json_response(result, dumps=self.encoder)
 
             unwrapped_example = False
@@ -78,7 +78,8 @@ class JsonHandler(object):
             if not batch_result:
                 query_params, result_params = await self.model.parse(
                         method, data, False)
-                batch_result = self.model.query(query_params, result_params)
+                batch_result = await self.model.query(query_params,
+                                                      result_params)
 
             if not batch_result:
                 return web.json_response(

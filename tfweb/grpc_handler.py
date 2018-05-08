@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from tfweb.service_pb2 import PredictResponse
-from tfweb.service_grpc import ModelBase
+from service_pb2 import PredictResponse
+from service_grpc import ModelBase
 
 # from predict_service_pb2 import PredictResponse
 # from predict_service_grpc import PredictionServiceBase
@@ -39,7 +39,7 @@ class GrpcHandler(ModelBase):
         try:
             query_params, result_params = await self.model.parse(
                     method, data, False)
-            return self.model.query(query_params, result_params)
+            return await self.model.query(query_params, result_params)
         except Exception as e:
             print(e)
             return None
