@@ -1,0 +1,16 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/${PROJECT_ID}/tfweb:$REVISION_ID", "."]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/${PROJECT_ID}/tfweb:$REVISION_ID"]
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - set
+  - image
+  - deployments
+  - --namespace=default
+  - --selector=type=tfweb
+  - tfweb=gcr.io/schibsted-ai/tfweb:${REVISION_ID}
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=schibsted-ai'
