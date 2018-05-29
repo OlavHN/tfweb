@@ -37,6 +37,7 @@ async def init(loop, args):
     if args.no_cors:
         web_app.router.add_get('/', batcher.info_handler)
         web_app.router.add_post('/{method}', json_handler.handler)
+        web_app.router.add_post('/', json_handler.handler)
     else:
         cors = aiohttp_cors.setup(
                 web_app,
@@ -52,6 +53,9 @@ async def init(loop, args):
         cors.add(get_resource.add_route("GET", batcher.info_handler))
 
         post_resource = cors.add(web_app.router.add_resource('/{method}'))
+        cors.add(post_resource.add_route("POST", json_handler.handler))
+
+        post_resource = cors.add(web_app.router.add_resource('/'))
         cors.add(post_resource.add_route("POST", json_handler.handler))
 
     if args.static_path:
