@@ -82,7 +82,7 @@ class Model:
             for key, tensor_info in signature_def.inputs.items():
                 signature['inputs'][key] = {
                     'type':
-                    tf.as_dtype(tensor_info.dtype).name,
+                    tf.as_dtype(tensor_info.dtype).name if tensor_info.dtype else 'unknown',
                     'shape':
                     'unkown' if tensor_info.tensor_shape.unknown_rank else
                     [dim.size for dim in tensor_info.tensor_shape.dim]
@@ -90,7 +90,7 @@ class Model:
             for key, tensor_info in signature_def.outputs.items():
                 signature['outputs'][key] = {
                     'type':
-                    tf.as_dtype(tensor_info.dtype).name,
+                    tf.as_dtype(tensor_info.dtype).name if tensor_info.dtype else 'unknown',
                     'shape':
                     'unkown' if tensor_info.tensor_shape.unknown_rank else
                     [dim.size for dim in tensor_info.tensor_shape.dim]
