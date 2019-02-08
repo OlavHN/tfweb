@@ -11,7 +11,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='tfweb',
-      version='0.4.4',
+      version='0.4.6',
       description='Server for exposing tensorflow models though HTTP JSON API',
       long_description=long_description,
       url='https://github.com/olavhn/tfweb',
@@ -30,4 +30,3 @@ setup(name='tfweb',
       install_requires=['aiohttp>=2', 'aiohttp_cors>=0.7', 'grpclib>=0.1'],
       python_requires='>=3.5',
       scripts=['bin/tfweb'])
-
