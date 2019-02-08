@@ -107,6 +107,11 @@ def main(args):
             type=int,
             default=50051,
             help='Port accepting grpc requests')
+    parser.add_argument(
+            '--port',
+            type=int,
+            default=8080,
+            help='tfweb model access port')
     args = parser.parse_args(args)
 
     loop = asyncio.get_event_loop()
@@ -116,7 +121,7 @@ def main(args):
     loop.run_until_complete(grpc_app.start('0.0.0.0', args.grpc_port))
 
     try:
-        web.run_app(web_app)
+        web.run_app(web_app, port= args.port)
     except asyncio.CancelledError:
         pass
 
