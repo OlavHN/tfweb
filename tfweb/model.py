@@ -10,9 +10,15 @@ class Model:
     default_tag = tf.saved_model.tag_constants.SERVING
 
     def __init__(self, path, tags, loop):
-        self.sess = tf.Session()
+        self.sess = tf.compat.v1.Session()
         self.loop = loop
         try:
+            # If not a saved_model, check if subdirectories are.
+            if not tf.saved_model.contains_saved_model(path):
+                for d in sorted(tf.io.gfile.listdir(path), reverse=True):
+                    if tf.saved_model.contains_saved_model(path + '/' + d):
+                        path = path + '/' + d
+                        break
             self.graph_def = tf.saved_model.loader.load(self.sess, tags, path)
         except Exception as e:
             raise IOError('Couldn\'t load saved_model')
