@@ -13,9 +13,11 @@ class Model:
         self.sess = tf.compat.v1.Session()
         self.loop = loop
         try:
+            path = path.rstrip('/')
             # If not a saved_model, check if subdirectories are.
             if not tf.saved_model.contains_saved_model(path):
                 for d in sorted(tf.io.gfile.listdir(path), reverse=True):
+                    d = d.lstrip('/')
                     if tf.saved_model.contains_saved_model(path + '/' + d):
                         path = path + '/' + d
                         break
