@@ -11,7 +11,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='tfweb',
-      version='0.4.9',
+      version='0.4.10',
       description='Server for exposing tensorflow models though HTTP JSON API',
       long_description=long_description,
       long_description_content_type='text/markdown',

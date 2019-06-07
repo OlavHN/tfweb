@@ -56,6 +56,7 @@ class JsonHandler(object):
                 path = data['path']
                 await self.model.set_model(path)
                 self.batcher.set_model()
+                return web.json_response({'status': 'model updated'})
 
             if method not in self.batcher.batched_queues and \
                method not in self.batcher.direct_methods:
