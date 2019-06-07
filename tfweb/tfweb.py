@@ -25,7 +25,8 @@ async def init(loop, args):
         tags = args.tags.split(',')
     else:
         tags = [Model.default_tag]
-    model = Model(args.model, tags, loop)
+    model = Model(loop)
+    await model.set_model(args.model, tags)
     batcher = Batcher(model, loop, args.batch_size)
 
     web_app = web.Application(loop=loop, client_max_size=args.request_size)
@@ -121,7 +122,7 @@ def main(args):
     loop.run_until_complete(grpc_app.start('0.0.0.0', args.grpc_port))
 
     try:
-        web.run_app(web_app, port= args.port)
+        web.run_app(web_app, port=args.port)
     except asyncio.CancelledError:
         pass
 

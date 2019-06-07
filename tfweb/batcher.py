@@ -8,19 +8,26 @@ class Batcher:
         self.loop = loop
         self.batch_size = batch_size
         self.model = model
+        self.tasks = []
+
+        self.set_model()
+
+    def set_model(self):
+        while len(self.tasks):
+            self.tasks.pop().cancel()
 
         batched_methods, direct_methods = self.find_batched_methods()
         self.direct_methods = set(map(lambda x: x['name'], direct_methods))
 
         self.batched_queues = {
                 signature['name']: asyncio.Queue(
-                        maxsize=batch_size, loop=loop)
+                        maxsize=self.batch_size, loop=self.loop)
                 for signature in batched_methods
         }
 
         for queue in self.batched_queues:
-            loop.create_task(
-                    self.batch(self.batched_queues[queue], batch_size))
+            self.tasks.append(self.loop.create_task(
+                    self.batch(self.batched_queues[queue], self.batch_size)))
 
     def find_batched_methods(self):
         batched_methods = []

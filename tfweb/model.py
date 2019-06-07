@@ -1,6 +1,11 @@
 import tensorflow as tf
 import numpy as np
+import aiohttp
 import functools
+import tempfile
+import io
+from zipfile import ZipFile
+from urllib.parse import urlparse
 
 dir(tf.contrib)  # contrib ops lazily loaded
 
@@ -9,21 +14,27 @@ class Model:
 
     default_tag = tf.saved_model.tag_constants.SERVING
 
-    def __init__(self, path, tags, loop):
-        self.sess = tf.compat.v1.Session()
+    def __init__(self, loop):
         self.loop = loop
+        self.sess = None
+
+    async def set_model(self, path, tags=[tf.saved_model.tag_constants.SERVING]):
         try:
-            path = path.rstrip('/')
-            # If not a saved_model, check if subdirectories are.
-            if not tf.saved_model.contains_saved_model(path):
-                for d in sorted(tf.io.gfile.listdir(path), reverse=True):
-                    d = d.lstrip('/')
-                    if tf.saved_model.contains_saved_model(path + '/' + d):
-                        path = path + '/' + d
-                        break
-            self.graph_def = tf.saved_model.loader.load(self.sess, tags, path)
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                if path.startswith('http'):
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(path) as r:
+                            zipped = ZipFile(io.BytesIO(await r.read()))
+                    zipped.extractall(tmpdirname)
+                    path = tmpdirname
+
+                session = tf.compat.v1.Session()
+                self.graph_def = tf.saved_model.loader.load(session, tags, path)
+                if self.sess:
+                    self.sess.close()
+                self.sess = session
         except Exception as e:
-            raise IOError('Couldn\'t load saved_model')
+            raise IOError('Couldn\'t load saved_model', e)
 
     async def parse(self, method, request, validate_batch):
         signature = self.graph_def.signature_def[method]

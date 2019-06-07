@@ -50,6 +50,13 @@ class JsonHandler(object):
     async def handler(self, request):
         try:
             method = request.match_info.get('method', 'serving_default')
+
+            if method == 'set_model':
+                data = await request.json()
+                path = data['path']
+                await self.model.set_model(path)
+                self.batcher.set_model()
+
             if method not in self.batcher.batched_queues and \
                method not in self.batcher.direct_methods:
                 return web.json_response(
