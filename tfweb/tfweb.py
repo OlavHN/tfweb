@@ -26,7 +26,8 @@ async def init(loop, args):
     else:
         tags = [Model.default_tag]
     model = Model(loop)
-    await model.set_model(args.model, tags)
+    if args.model:
+        await model.set_model(args.model, tags)
     batcher = Batcher(model, loop, args.batch_size)
 
     web_app = web.Application(loop=loop, client_max_size=args.request_size)
@@ -73,7 +74,6 @@ def main(args):
     parser.add_argument(
             '--model',
             type=str,
-            default='./examples/basic/model',
             help='path to saved_model directory (can be GCS)')
     parser.add_argument(
             '--tags',

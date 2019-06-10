@@ -17,6 +17,7 @@ class Model:
     def __init__(self, loop):
         self.loop = loop
         self.sess = None
+        self.graph_def = None
 
     async def set_model(self, path, tags=[tf.saved_model.tag_constants.SERVING]):
         try:
@@ -91,6 +92,9 @@ class Model:
                 self.sess.run, result_params, feed_dict=query_params))
 
     def list_signatures(self):
+        if not self.graph_def:
+            return []
+
         signatures = []
         signature_def_map = self.graph_def.signature_def
         for key, signature_def in signature_def_map.items():
